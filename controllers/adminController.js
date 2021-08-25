@@ -1,5 +1,6 @@
 const db = require('../models')
 const Restaurant = db.Restaurant
+const User = db.User
 const fs = require('fs')
 
 const imgur = require('imgur-node-api')
@@ -19,7 +20,6 @@ const adminController = {
       req.flash('error_messages', "name didn't exist")
       return res.redirect('back')
     }
-    console.log('post req.file', req.file)
     const { file } = req
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID);
@@ -66,15 +66,11 @@ const adminController = {
       req.flash('error_messages', "name didn't exist")
       return res.redirect('back')
     }
-    console.log('req.file', req.file)
     const { file } = req
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID);
       imgur.upload(file.path, (err, img) => {
-        console.log('img.data.link',img.data.link)
-        console.log(err)
         return Restaurant.findByPk(req.params.id)
-
           .then((restaurant) => {
             restaurant.update({
               name: req.body.name,
@@ -116,6 +112,20 @@ const adminController = {
           .then((restaurant) => {
             res.redirect('/admin/restaurants')
           })
+      })
+  },
+  getUsers: (req, res) => {
+    return User.findAll({ raw: true }).then(users => {
+      return res.render('admin/users', { users: users })
+    })
+  },
+  toggleAdmin: (req, res) => {
+    return User.findByPk(req.params.id)
+      .then(user => {
+        user.update({
+          isAdmin: !user.isAdmin
+        })
+        return res.redirect('/admin/users')
       })
   }
 }
