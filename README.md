@@ -1,22 +1,6 @@
 # README
 
-<<<<<<< HEAD
-1. Fork
-2. git clone
-3. 更改專案名稱
 
-## 初始化
-### Initialize
-```
-git remote add upstream https://github.com/ALPHACamp/forum-express-grading.git  # 建立上游連線
-=======
-## 初始化
-### Initialize
-```
-git clone https://github.com/your_github_name/forum-express-2020
-cd forum-express
-git remote add upstream https://github.com/ALPHACamp/forum-express-2020.git  # 建立上游連線
->>>>>>> origin/A17-test
 npm install
 ```
 
@@ -27,7 +11,6 @@ npm install
 create database forum;
 create database forum_test;
 ```
-<<<<<<< HEAD
 
 ### 切換環境
 
@@ -83,7 +66,6 @@ git commit -m "...."
 
 ## 繳交作業
 
->>>>>>> origin/A17-test
 ```
 git push origin A17           # 上傳本地進度
 ```

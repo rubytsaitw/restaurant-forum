@@ -125,6 +125,8 @@ const adminController = {
         user.update({
           isAdmin: !user.isAdmin
         })
+        const isAdminString = user.isAdmin === true ? 'admin' : 'user'
+        req.flash('success_messages', `${user.name} was successfully changed to ${isAdminString}`)
         return res.redirect('/admin/users')
       })
   }
