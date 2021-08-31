@@ -5,7 +5,7 @@ const commentController = {
   postComment: (req, res) => {
     return Comment.create({
       text: req.body.text,
-      Restaurant: req.body.restaurantId,
+      RestaurantId: req.body.restaurantId,
       UserId: req.user.id
     })
       .then(comment => {
