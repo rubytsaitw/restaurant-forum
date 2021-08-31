@@ -1,3 +1,4 @@
+{{!-- Nav bar for category filter--}}
 <ul class="nav nav-pills">
   <li class="nav-item">
     <a class="nav-link {{#ifCond '' categoryId}}active{{/ifCond}}" href="?categoryId=">全部</a>
@@ -9,6 +10,8 @@
   {{/each}}
 </ul>
 <br />
+
+{{!-- Restaurant cards --}}
 <div class="row">
   {{#each restaurants}}
   <div class="col-md-4">
@@ -26,6 +29,30 @@
     </div>
   </div>
   {{/each}}
+
+{{!-- Pagination --}}
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link" href="/restaurants?page={{prev}}&categoryId={{categoryId}}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      {{#each overallPage}}
+      {{#ifCond this ../page}}
+      <li class="page-item active"><a class="page-link" href="#">{{this}}</a></li>
+      {{else}}
+      <li class="page-item"><a class="page-link"
+          href="/restaurants?page={{this}}&categoryId={{../categoryId}}">{{this}}</a></li>
+      {{/ifCond}}
+      {{/each}}
+      <li class="page-item"><a class="page-link" href="/restaurants?page={{next}}&categoryId={{categoryId}}"
+          aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
 </div>
 <br />
 <br />
