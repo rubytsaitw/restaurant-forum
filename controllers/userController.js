@@ -41,6 +41,12 @@ const userController = {
     req.flash('success_message', 'Logout successful')
     req.logout()
     res.redirect('/signin')
+  },
+  getProfile: (req, res) => {
+    User.findByPk(req.params.id)
+      .then(user => {
+        res.render('profile', { user: user.toJSON() })
+      })
   }
 }
 
