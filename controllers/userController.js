@@ -4,6 +4,7 @@ const User = db.User
 const Comment = db.Comment
 const Restaurant = db.Restaurant
 const fs = require('fs')
+const helpers = require('../_helpers')
 
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'c413a982ea63ad2'
@@ -49,7 +50,6 @@ const userController = {
     res.redirect('/signin')
   },
   getUser: (req, res) => {
-    console.log('======getUser====')
     const userId = req.params.id
     User.findByPk(userId)
       .then(user => {
@@ -68,10 +68,10 @@ const userController = {
         })
       })
   },
-  editUser: (req, res) => {
+  editUser: (req, res) => { 
     User.findByPk(req.params.id)
     .then(user => {
-        if (req.user.id !== Number(req.params.id)) {
+      if (helpers.getUser(req).id !== Number(req.params.id)) {
           req.flash('error_messages', "Cannot edit other's profile.")
           return res.redirect('back')
         }
