@@ -53,39 +53,15 @@ const restController = {
       })
   },
   getRestaurant: (req, res) => {
-    Restaurant.findByPk(req.params.id, {
-      include: [
-        Category,
+    return Restaurant.findByPk(req.params.id, {
+      include: [Category,
         { model: Comment, include: [User] }
       ]
-    }).then(restaurant => {
-      return res.render('restaurant', {
-        restaurant: restaurant.toJSON()
-      })
     })
-  },
-  getFeeds: (req, res) => {
-    return Promise.all([
-      Restaurant.findAll({
-        limit: 10,
-        raw: true,
-        nest: true,
-        order: [['createdAt', 'DESC']],
-        include: [Category]
-      }),
-      Comment.findAll({
-        limit: 10,
-        raw: true,
-        nest: true,
-        order: [['createdAt', 'DESC']],
-        include: [User, Restaurant]
+      .then(restaurant => {
+        restaurant.increment('viewCounts', { by: 1 })
+        res.render('restaurant', { restaurant: restaurant.toJSON() })
       })
-    ]).then(comments => {
-      res.render('feeds', {
-        restaurants: restaurants,
-        comments: comments
-      })
-    })
   },
   getDashboard: (req, res) => {
     return Restaurant.findByPk(req.params.id, {
@@ -94,7 +70,8 @@ const restController = {
         { model: Comment, include: [User] }
       ]
     }).then(restaurant => {
-      return res.render('dashboard', { restaurant: restaurant.toJSON() })
+      const count = restaurant.count
+      return res.render('dashboard', { count, restaurant: restaurant.toJSON() })
     })
   }
 }

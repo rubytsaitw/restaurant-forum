@@ -20,6 +20,29 @@ const commentController = {
           res.redirect(`/restaurants/${comment.RestaurantId}`)
         })
       })
+  },
+  getFeeds: (req, res) => {
+    return Promise.all([
+      Restaurant.findAll({
+        limit: 10,
+        raw: true,
+        nest: true,
+        order: [['createdAt', 'DESC']],
+        include: [Category]
+      }),
+      Comment.findAll({
+        limit: 10,
+        raw: true,
+        nest: true,
+        order: [['createdAt', 'DESC']],
+        include: [User, Restaurant]
+      })
+    ]).then(comments => {
+      res.render('feeds', {
+        restaurants: restaurants,
+        comments: comments
+      })
+    })
   }
 }
 
