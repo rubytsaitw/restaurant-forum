@@ -3,6 +3,7 @@ const db = require('../models')
 const User = db.User
 const Comment = db.Comment
 const Restaurant = db.Restaurant
+const Favorite = db.Favorite
 const helpers = require('../_helpers')
 
 const imgur = require('imgur-node-api')
@@ -56,21 +57,21 @@ const userController = {
           include: [Restaurant],
           where: { userId: userId }
         })
-        .then(results => {
-          const data = results.rows.map(comment => ({
-            ...comment,
-            restaurantId: comment.Restaurant.id,
-            restaurantImage: comment.Restaurant.image
-          }))
-          const count = results.count
-          res.render('profile', { user: user.toJSON(), comments: data, count })
-        })
+          .then(results => {
+            const data = results.rows.map(comment => ({
+              ...comment,
+              restaurantId: comment.Restaurant.id,
+              restaurantImage: comment.Restaurant.image
+            }))
+            const count = results.count
+            res.render('profile', { user: user.toJSON(), comments: data, count })
+          })
       })
   },
-  editUser: (req, res) => { 
+  editUser: (req, res) => {
     User.findByPk(req.params.id)
-    .then(user => {
-      if (helpers.getUser(req).id !== Number(req.params.id)) {
+      .then(user => {
+        if (helpers.getUser(req).id !== Number(req.params.id)) {
           req.flash('error_messages', "Cannot edit other's profile.")
           return res.redirect('back')
         }
@@ -115,6 +116,29 @@ const userController = {
         })
     }
   },
+  addFavorite: (req, res) => {
+    return Favorite.create({
+      UserId: helpers.getUser(req).id,
+      RestaurantId: req.params.restaurantId
+    })
+      .then(restaurant => {
+        return res.redirect('back')
+      })
+  },
+  removeFavorite: (req, res) => {
+    return Favorite.findOne({
+      where: {
+        UserId: helpers.getUser(req).id,
+        RestaurantId: req.params.restaurantId
+      }
+    })
+      .then(favorite => {
+        favorite.destroy()
+        .then(restaurant => {
+          return res.redirect('back')
+        })
+      })
+  }
 }
 
 module.exports = userController
