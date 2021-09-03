@@ -5,7 +5,7 @@ const Category = db.Category
 const fs = require('fs')
 
 const imgur = require('imgur-node-api')
-const IMGUR_CLIENT_ID = 'c413a982ea63ad2'
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const adminController = {
   getRestaurants: (req, res) => {

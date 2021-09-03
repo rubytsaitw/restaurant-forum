@@ -1,5 +1,8 @@
 const db = require('../models')
 const Comment = db.Comment
+const Restaurant = db.Restaurant
+const Category = db.Category
+const User = db.User
 
 const commentController = {
   postComment: (req, res) => {
@@ -37,7 +40,7 @@ const commentController = {
         order: [['createdAt', 'DESC']],
         include: [User, Restaurant]
       })
-    ]).then(comments => {
+    ]).then(([restaurants, comments]) => {
       res.render('feeds', {
         restaurants: restaurants,
         comments: comments
