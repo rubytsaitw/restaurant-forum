@@ -3,6 +3,7 @@ const Restaurant = db.Restaurant
 const Category = db.Category
 const User = db.User
 const Comment = db.Comment
+const helpers = require('../_helpers')
 
 const pageLimit = 10
 
@@ -33,7 +34,8 @@ const restController = {
         const data = result.rows.map(r => ({
           ...r.dataValues,
           description: r.dataValues.description.substring(0, 50),
-          categoryName: r.Category.name
+          categoryName: r.Category.name,
+          isFavorited: helpers.getUser(req).FavoritedRestaurants.map(d => d.id).includes(r.id)             
         }))
         Category.findAll({
           raw: true,
@@ -55,12 +57,17 @@ const restController = {
   getRestaurant: (req, res) => {
     return Restaurant.findByPk(req.params.id, {
       include: [Category,
+        { model: User, as: 'FavoritedUsers' },
         { model: Comment, include: [User] }
       ]
     })
       .then(restaurant => {
         restaurant.increment('viewCounts', { by: 1 })
-        res.render('restaurant', { restaurant: restaurant.toJSON() })
+        const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(helpers.getUser(req).id)
+        res.render('restaurant', { 
+          restaurant: restaurant.toJSON(),
+          isFavorited: isFavorited
+        })
       })
   },
   getDashboard: (req, res) => {
