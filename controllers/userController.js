@@ -5,6 +5,7 @@ const Comment = db.Comment
 const Restaurant = db.Restaurant
 const Favorite = db.Favorite
 const Like = db.Like
+const Followship = db.Followship
 const helpers = require('../_helpers')
 
 const imgur = require('imgur-node-api')
@@ -135,9 +136,9 @@ const userController = {
     })
       .then(favorite => {
         favorite.destroy()
-        .then(restaurant => {
-          return res.redirect('back')
-        })
+          .then(restaurant => {
+            return res.redirect('back')
+          })
       })
   },
   like: (req, res) => {
@@ -162,6 +163,22 @@ const userController = {
             return res.redirect('back')
           })
       })
+  },
+  getTopUser: (req, res) => {
+    return User.findAll({
+      include: [
+        { model: User, as: 'Followers' }
+      ]
+    }).then(users => {
+      console.log('=======users:', users)
+      users = users.map(user => ({
+        ...user.dataValues,
+        FollowerCount: user.Followers.length,
+        isFollowed: helpers.getUser(req).Followings.map(d => d.id).includes(user.id)
+      }))
+      users.sort((a, b) => b.FollowerCount - a.FollowerCount)
+      return res.render('topUser', { users: users })
+    })
   }
 }
 
