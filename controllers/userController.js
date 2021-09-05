@@ -170,7 +170,6 @@ const userController = {
         { model: User, as: 'Followers' }
       ]
     }).then(users => {
-      console.log('=======users:', users)
       users = users.map(user => ({
         ...user.dataValues,
         FollowerCount: user.Followers.length,

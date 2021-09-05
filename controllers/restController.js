@@ -3,6 +3,7 @@ const Restaurant = db.Restaurant
 const Category = db.Category
 const User = db.User
 const Comment = db.Comment
+const Favorite = db.Favorite
 const helpers = require('../_helpers')
 
 const pageLimit = 10
@@ -36,7 +37,7 @@ const restController = {
           description: r.dataValues.description.substring(0, 50),
           categoryName: r.Category.name,
           isFavorited: helpers.getUser(req).FavoritedRestaurants.map(d => d.id).includes(r.id),
-          isLiked: helpers.getUser(req).LikedRestaurants.map(d => d.id).includes(r.id)         
+          isLiked: helpers.getUser(req).LikedRestaurants.map(d => d.id).includes(r.id)
         }))
         Category.findAll({
           raw: true,
@@ -67,7 +68,7 @@ const restController = {
         restaurant.increment('viewCounts', { by: 1 })
         const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(helpers.getUser(req).id)
         const isLiked = restaurant.LikedUsers.map(d => d.id).includes(helpers.getUser(req).id)
-        res.render('restaurant', { 
+        res.render('restaurant', {
           restaurant: restaurant.toJSON(),
           isFavorited: isFavorited,
           isLiked: isLiked
@@ -84,6 +85,24 @@ const restController = {
       const count = restaurant.count
       return res.render('dashboard', { count, restaurant: restaurant.toJSON() })
     })
+  },
+  getTopRestaurants: (req, res) => {
+    return Restaurant.findAll({
+      include: [
+        { model: User, as: 'FavoritedUsers' }
+      ]
+    })
+      .then(restaurants => {
+        restaurants = restaurants.map(restaurant => ({
+          ...restaurant.dataValues,
+          description: restaurant.description.substring(0, 60),
+          FavoriteCount: restaurant.FavoritedUsers.length,
+          isFavorited: helpers.getUser(req).FavoritedRestaurants.map(d => d.id).includes(restaurant.id)
+        }))
+        restaurants.sort((a, b) => b.FavoriteCount - a.FavoriteCount)
+        restaurants = restaurants.slice(0,10)
+        return res.render('topRestaurants', { restaurants: restaurants })
+      })
   }
 }
 
