@@ -53,7 +53,7 @@ const userController = {
   },
   getUser: (req, res) => {
     const userId = req.params.id
-    // const reqUser = helpers.getUser(req)
+    const reqUser = helpers.getUser(req)
     const restaurants = helpers.getUser(req).FavoritedRestaurants
     const FavoriteRestCount = helpers.getUser(req).FavoritedRestaurants.length
     const followers = reqUser.Followers
