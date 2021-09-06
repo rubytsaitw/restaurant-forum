@@ -53,13 +53,13 @@ const userController = {
   },
   getUser: (req, res) => {
     const userId = req.params.id
-    const reqUser = helpers.getUser(req)
+    // const reqUser = helpers.getUser(req)
     const restaurants = helpers.getUser(req).FavoritedRestaurants
     const FavoriteRestCount = helpers.getUser(req).FavoritedRestaurants.length
-    const followers = reqUser.Followers
-    const FollowerCount = reqUser.Followers.length
-    const followings = reqUser.Followings
-    const FollowingCount = reqUser.Followings.length
+    const followers = helpers.getUser(req).Followers
+    const FollowerCount = helpers.getUser(req).Followers.length
+    const followings = helpers.getUser(req).Followings
+    const FollowingCount = helpers.getUser(req).Followings.length
 
     return User.findByPk(userId)
       .then(user => {
