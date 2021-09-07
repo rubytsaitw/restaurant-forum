@@ -1,11 +1,11 @@
-const db = require('../models')
+const db = require('../../models')
 const Category = db.Category
-const categoryService = require('../services/categoryService.js')
+const categoryService = require('../../services/categoryService.js')
 
 const categoryController = {
   getCategories: (req, res) => {
     categoryService.getCategories(req, res, (data) => {
-      return res.render('admin/categories', data)
+      return res.json(data)
     })
   },
   postCategories: (req, res) => {
@@ -27,12 +27,12 @@ const categoryController = {
       return res.redirect('back')
     } else {
       return Category.findByPk(req.params.id)
-      .then(category => {
-        category.update(req.body)
         .then(category => {
-          return res.redirect('/admin/categories')
+          category.update(req.body)
+            .then(category => {
+              return res.redirect('/admin/categories')
+            })
         })
-      })
     }
   },
   deleteCategory: (req, res) => {

@@ -1,11 +1,23 @@
 const db = require('../models')
 const Category = db.Category
-const categoryService = require('../services/categoryService.js')
 
 const categoryController = {
-  getCategories: (req, res) => {
-    categoryService.getCategories(req, res, (data) => {
-      return res.render('admin/categories', data)
+  getCategories: (req, res, callback) => {
+    return Category.findAll({
+      raw: true,
+      nest: true
+    }).then(categories => {
+      if (req.params.id) {
+        Category.findByPk(req.params.id)
+          .then(category => {
+            return res.render('admin/categories', {
+              category: category.toJSON(),
+              categories: categories
+            })
+          })
+      } else {
+        callback({ categories: categories })
+      }
     })
   },
   postCategories: (req, res) => {
@@ -27,12 +39,12 @@ const categoryController = {
       return res.redirect('back')
     } else {
       return Category.findByPk(req.params.id)
-      .then(category => {
-        category.update(req.body)
         .then(category => {
-          return res.redirect('/admin/categories')
+          category.update(req.body)
+            .then(category => {
+              return res.redirect('/admin/categories')
+            })
         })
-      })
     }
   },
   deleteCategory: (req, res) => {
